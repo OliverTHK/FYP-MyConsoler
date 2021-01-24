@@ -1,6 +1,6 @@
-# my_consoler
+# MyConsoler
 
-A new Flutter application for FYP.
+A new Flutter application for FYP, developed to console the Covid-19 victims. The app is built using latest Google development technologies such as Flutter, Firebase and Dialogflow.
 
 ## Getting Started
 
