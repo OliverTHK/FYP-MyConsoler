@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "906998179656",
+    "firebase_url": "https://myconsoler-db.firebaseio.com",
+    "project_id": "myconsoler-db",
+    "storage_bucket": "myconsoler-db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:906998179656:android:d3c8f2322b4486539ab57d",
+        "android_client_info": {
+          "package_name": "com.oliverthk.my_consoler"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "906998179656-91c4j0bsit2hntn5ridlu0i7fr357m79.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8fO2GOkjvuhIcXWtiXMmR4dR4q0e_1EI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "906998179656-91c4j0bsit2hntn5ridlu0i7fr357m79.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
