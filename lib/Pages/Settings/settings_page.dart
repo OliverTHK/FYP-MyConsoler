@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_consoler/Pages/Chat/components/temp_storage.dart';
+import 'package:my_consoler/Pages/Settings/components/temp_storage.dart';
 import 'package:my_consoler/Pages/Settings/components/body.dart';
 
 class SettingsPage extends StatefulWidget {

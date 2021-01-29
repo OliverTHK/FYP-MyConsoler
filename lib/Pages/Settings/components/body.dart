@@ -9,7 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
-import 'package:my_consoler/Pages/Chat/components/temp_storage.dart';
+import 'package:my_consoler/Pages/Settings/components/temp_storage.dart';
 import 'package:my_consoler/Services/auth.dart';
 import 'package:my_consoler/theme_changer.dart';
 import 'package:my_consoler/themes.dart';
