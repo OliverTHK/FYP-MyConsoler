@@ -4,7 +4,6 @@ import 'package:bubble/bubble.dart';
 import 'package:dialog_flowtter/dialog_flowtter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:intl/intl.dart';
 import 'package:my_consoler/Models/custom_user.dart';
 import 'package:my_consoler/Services/database.dart';
 import 'package:my_consoler/themes.dart';
@@ -34,6 +33,7 @@ class _BodyState extends State<Body> {
   double level = 0.0;
   double minSoundLevel = 50000;
   double maxSoundLevel = -50000;
+  List<Map<String, dynamic>> messages = [];
 
   @override
   void initState() {
@@ -57,172 +57,193 @@ class _BodyState extends State<Body> {
     });
   }
 
-  void response(query) async {
-    DetectIntentResponse response = await dialogFlowtter.detectIntent(
-      queryInput: QueryInput(
-        text: TextInput(
-          text: query,
-          languageCode: 'en',
-        ),
-      ),
-    );
-    setState(() {
-      messages.insert(0, {'data': 0, 'message': response.text});
-    });
-    print(response.text);
-  }
-
-  List<Map> messages = List();
-
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<CustomUser>(context);
-    return Container(
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(
-              vertical: 10,
-            ),
-            child: Text(
-              'Today, ${DateFormat('h:mm a').format(DateTime.now())}',
-            ),
-          ),
-          Flexible(
-            child: Scrollbar(
-              child: ListView.builder(
-                physics: BouncingScrollPhysics(),
-                controller: _scrollController,
-                reverse: true,
-                itemCount: messages.length,
-                itemBuilder: (context, index) => chat(
-                    messages[index]['message'].toString(),
-                    messages[index]['data']),
+    Size size = MediaQuery.of(context).size;
+    return Column(
+      children: [
+        Expanded(
+          child: Scrollbar(
+            child: ListView.separated(
+              physics: BouncingScrollPhysics(),
+              controller: _scrollController,
+              reverse: true,
+              itemCount: messages.length,
+              itemBuilder: (context, index) {
+                var obj = messages[messages.length - 1 - index];
+                Message message = obj['message'];
+                bool isUserMessage = obj['isUserMessage'] ?? false;
+                return Row(
+                  mainAxisAlignment: isUserMessage
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    isUserMessage
+                        ? Container()
+                        : Container(
+                            height: 60.0,
+                            width: 60.0,
+                            child: CircleAvatar(
+                              backgroundImage:
+                                  AssetImage('assets/icons/Icon 1.png'),
+                            ),
+                          ),
+                    Container(
+                      constraints: BoxConstraints(maxWidth: size.width * 0.5),
+                      child: LayoutBuilder(
+                        builder: (context, constrains) {
+                          return Bubble(
+                            radius: Radius.circular(10),
+                            color: isUserMessage ? kPrimaryColor : Colors.grey,
+                            nip: isUserMessage
+                                ? BubbleNip.rightTop
+                                : BubbleNip.leftTop,
+                            elevation: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SelectableLinkify(
+                                onOpen: _onOpen,
+                                text: message?.text?.text[0] ?? '',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  // fontWeight: FontWeight.bold,
+                                ),
+                                linkStyle:
+                                    TextStyle(color: Colors.lightBlue[100]),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
+              separatorBuilder: (_, i) => Container(
+                height: 10.0,
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10.0,
+                vertical: 20.0,
               ),
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
-          Divider(
-            height: 5.0,
-            color: kPrimaryLightColor,
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 18.0),
-              child: GestureDetector(
-                onVerticalDragUpdate: (details) {
-                  if (details.delta.dy > 0) FocusScope.of(context).unfocus();
-                },
-                child: Container(
-                  child: ListTile(
-                    leading: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                              blurRadius: .26,
-                              spreadRadius: level * 1.5,
-                              color: Colors.black.withOpacity(.1)),
-                        ],
-                      ),
-                      child: Tooltip(
-                        preferBelow: false,
-                        message: 'Speech-to-text',
-                        child: FloatingActionButton(
-                          backgroundColor: kPrimaryColor,
-                          child: Icon(
-                            Icons.mic,
-                            color: speech.isListening ? Colors.red : null,
-                          ),
-                          onPressed: () {
-                            !isSpeechEnabled || speech.isListening
-                                // ignore: unnecessary_statements
-                                ? null
-                                : startListening();
-                          },
+        ),
+        Divider(
+          height: 5.0,
+          color: kPrimaryLightColor,
+        ),
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 18.0),
+            child: GestureDetector(
+              onVerticalDragUpdate: (details) {
+                if (details.delta.dy > 0) FocusScope.of(context).unfocus();
+              },
+              child: Container(
+                child: ListTile(
+                  leading: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                            blurRadius: .26,
+                            spreadRadius: level * 1.5,
+                            color: Colors.black.withOpacity(.1)),
+                      ],
+                    ),
+                    child: Tooltip(
+                      preferBelow: false,
+                      message: 'Speech-to-text',
+                      child: FloatingActionButton(
+                        backgroundColor: kPrimaryColor,
+                        child: Icon(
+                          Icons.mic,
+                          color: speech.isListening ? Colors.red : null,
                         ),
+                        onPressed: () {
+                          !isSpeechEnabled || speech.isListening
+                              // ignore: unnecessary_statements
+                              ? null
+                              : startListening();
+                        },
                       ),
                     ),
-                    title: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                        color: kAppBarColor,
-                      ),
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Scrollbar(
-                        child: TextFormField(
-                          controller: _textEditingController,
-                          decoration: InputDecoration(
-                            hintText: 'Enter a message',
-                            hintStyle: TextStyle(color: Colors.black54),
-                            border: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                          ),
-                          keyboardType: TextInputType.multiline,
-                          minLines: 1,
-                          maxLines: 3,
-                          style: TextStyle(fontSize: 16, color: Colors.black),
-                          // onChanged: (value) {},
-                        ),
-                      ),
-                    ),
-                    trailing: speech.isListening
-                        ? Tooltip(
-                            preferBelow: false,
-                            message: 'Cancel',
-                            child: IconButton(
-                              icon: Icon(Icons.close),
-                              onPressed: () {
-                                cancelListening();
-                              },
-                            ),
-                          )
-                        : Tooltip(
-                            preferBelow: false,
-                            message: 'Send',
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.send,
-                              ),
-                              onPressed: () async {
-                                String tempText;
-                                tempText = _textEditingController.text;
-                                if (_textEditingController.text.isEmpty ||
-                                    tempText.replaceAll(' ', '').isEmpty) {
-                                  print('Empty message.');
-                                } else {
-                                  await DatabaseService(uid: user.uid)
-                                      .addChatData(_textEditingController.text,
-                                          DateTime.now());
-                                  setState(() {
-                                    messages.insert(0, {
-                                      'data': 1,
-                                      'message': _textEditingController.text
-                                    });
-                                  });
-                                  response(_textEditingController.text);
-                                  _textEditingController.clear();
-                                  _scrollController.animateTo(
-                                    0.0,
-                                    duration: Duration(milliseconds: 300),
-                                    curve: Curves.easeOut,
-                                  );
-                                }
-                              },
-                            ),
-                          ),
                   ),
+                  title: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                      color: kAppBarColor,
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: Scrollbar(
+                      child: TextFormField(
+                        controller: _textEditingController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter a message',
+                          hintStyle: TextStyle(color: Colors.black54),
+                          border: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                        ),
+                        keyboardType: TextInputType.multiline,
+                        minLines: 1,
+                        maxLines: 3,
+                        style: TextStyle(fontSize: 16, color: Colors.black),
+                        // onChanged: (value) {},
+                      ),
+                    ),
+                  ),
+                  trailing: speech.isListening
+                      ? Tooltip(
+                          preferBelow: false,
+                          message: 'Cancel',
+                          child: IconButton(
+                            icon: Icon(Icons.close),
+                            onPressed: () {
+                              cancelListening();
+                            },
+                          ),
+                        )
+                      : Tooltip(
+                          preferBelow: false,
+                          message: 'Send',
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.send,
+                            ),
+                            onPressed: () async {
+                              String tempText;
+                              tempText = _textEditingController.text;
+                              if (_textEditingController.text.isEmpty ||
+                                  tempText.trim().isEmpty) {
+                                print('Empty message.');
+                              } else {
+                                await DatabaseService(uid: user.uid)
+                                    .addChatData(_textEditingController.text,
+                                        DateTime.now());
+                                sendMessage(_textEditingController.text);
+                                _textEditingController.clear();
+                                _scrollController.animateTo(
+                                  0.0,
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeOut,
+                                );
+                              }
+                            },
+                          ),
+                        ),
                 ),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -285,70 +306,48 @@ class _BodyState extends State<Body> {
     });
   }
 
-  Widget chat(String msg, int dt) {
-    Size size = MediaQuery.of(context).size;
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 20,
-      ),
-      child: Row(
-        mainAxisAlignment:
-            dt == 0 ? MainAxisAlignment.start : MainAxisAlignment.end,
-        children: [
-          dt == 0
-              ? Container(
-                  height: 60,
-                  width: 60,
-                  child: CircleAvatar(
-                    backgroundImage: AssetImage('assets/icons/Icon 1.png'),
-                  ),
-                )
-              : Container(),
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Bubble(
-              radius: Radius.circular(10),
-              color: dt == 0 ? Colors.grey : kPrimaryColor,
-              elevation: 1,
-              child: Padding(
-                padding: EdgeInsets.all(0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Flexible(
-                      child: Container(
-                        constraints:
-                            BoxConstraints(maxWidth: size.width * 0.45),
-                        child: SelectableLinkify(
-                          onOpen: _onOpen,
-                          options: LinkifyOptions(humanize: false),
-                          text: msg,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          linkStyle: TextStyle(color: Colors.lightBlue[100]),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Future<void> _onOpen(LinkableElement link) async {
     if (await canLaunch(link.url)) {
       await launch(link.url);
     } else {
       throw 'Could not launch $link';
     }
+  }
+
+  void sendMessage(String text) async {
+    if (text.isEmpty) return;
+    setState(() {
+      addMessage(
+        Message(text: DialogText(text: [text])),
+        true,
+      );
+    });
+
+    DetectIntentResponse response = await dialogFlowtter.detectIntent(
+      queryInput: QueryInput(
+        text: TextInput(
+          text: text,
+        ),
+      ),
+    );
+
+    if (response.message == null) return;
+    setState(() {
+      addMessage(response.message);
+      print(response.message);
+    });
+  }
+
+  void addMessage(Message message, [bool isUserMessage]) {
+    messages.add({
+      'message': message,
+      'isUserMessage': isUserMessage ?? false,
+    });
+  }
+
+  @override
+  void dispose() {
+    dialogFlowtter.dispose();
+    super.dispose();
   }
 }
