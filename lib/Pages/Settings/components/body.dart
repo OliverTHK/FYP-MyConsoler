@@ -1,22 +1,21 @@
 import 'dart:io';
 
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:my_consoler/Pages/Settings/components/temp_storage.dart';
 import 'package:my_consoler/Services/auth.dart';
-import 'package:my_consoler/theme_changer.dart';
 import 'package:my_consoler/themes.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Body extends StatefulWidget {
   final TempStorage tempStorage;
@@ -39,11 +38,18 @@ class _BodyState extends State<Body> {
   String password = 'myConsoler@google';
   List<String> dataList = new List<String>();
   List<String> splittedName = new List<String>();
+  int selectedRadio;
+
+  Future<Null> getSharedPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    selectedRadio = prefs.getInt('selectedRadio');
+  }
 
   @override
   void initState() {
     super.initState();
     getAppInfo();
+    getSharedPrefs();
   }
 
   void getAppInfo() async {
@@ -54,10 +60,18 @@ class _BodyState extends State<Body> {
     });
   }
 
+  setSelectedRadio(int val) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      selectedRadio = val;
+      prefs.setInt('selectedRadio', selectedRadio);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    ThemeChanger themeChanger = Provider.of<ThemeChanger>(context);
     var firebaseUser = FirebaseAuth.instance.currentUser;
+
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -75,39 +89,41 @@ class _BodyState extends State<Body> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SwitchListTile(
-                  activeColor: kPrimaryLightColor,
-                  value: themeChanger.darkMode,
-                  title: Text('Dark mode'),
-                  secondary: Icon(FontAwesome.moon),
-                  onChanged: (bool value) {
-                    setState(() {
-                      themeChanger.darkMode = value;
-                      themeChanger.darkMode
-                          ? themeChanger.setTheme(
-                              ThemeData(
-                                brightness: Brightness.dark,
-                                primaryColor: kAppBarColor,
-                                textSelectionColor: kPrimaryColor,
-                                accentColor: kPrimaryLightColor,
-                                floatingActionButtonTheme:
-                                    FloatingActionButtonThemeData(
-                                  foregroundColor: Colors.black,
-                                ),
-                              ),
-                            )
-                          : themeChanger.setTheme(
-                              ThemeData(
-                                brightness: Brightness.light,
-                                primaryColor: kAppBarColor,
-                                floatingActionButtonTheme:
-                                    FloatingActionButtonThemeData(
-                                  foregroundColor: Colors.white,
-                                ),
-                              ),
-                            );
-                    });
+                RadioListTile(
+                  value: 1,
+                  groupValue: selectedRadio,
+                  title: Text('Light'),
+                  activeColor: kPrimaryColor,
+                  onChanged: (val) {
+                    print('Radio button ${val} is pressed.');
+                    setSelectedRadio(val);
+                    AdaptiveTheme.of(context).setLight();
                   },
+                  selected: selectedRadio == 1,
+                ),
+                RadioListTile(
+                  value: 2,
+                  groupValue: selectedRadio,
+                  title: Text('Dark'),
+                  activeColor: kPrimaryColor,
+                  onChanged: (val) {
+                    print('Radio button ${val} is pressed.');
+                    setSelectedRadio(val);
+                    AdaptiveTheme.of(context).setDark();
+                  },
+                  selected: selectedRadio == 2,
+                ),
+                RadioListTile(
+                  value: 3,
+                  groupValue: selectedRadio,
+                  title: Text('System Default'),
+                  activeColor: kPrimaryColor,
+                  onChanged: (val) {
+                    print('Radio button ${val} is pressed.');
+                    setSelectedRadio(val);
+                    AdaptiveTheme.of(context).setSystem();
+                  },
+                  selected: selectedRadio == 3,
                 ),
                 SizedBox(
                   height: 30,
