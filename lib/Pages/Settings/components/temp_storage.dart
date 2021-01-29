@@ -11,7 +11,7 @@ class TempStorage {
 
   Future<File> get localFile async {
     final appPath = await localPath;
-    return File('$appPath/user_query.txt');
+    return File('$appPath/user_query.csv');
   }
 
   Future<String> readData() async {

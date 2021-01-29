@@ -132,6 +132,7 @@ class _BodyState extends State<Body> {
                         .collection('mychats')
                         .orderBy('timeStamp')
                         .get();
+                    dataList.add('user_message,timestamp');
                     querySnapshot.docs.forEach((res) async {
                       Timestamp timeStamp = res.data()['timeStamp'];
                       var dateTimeOffset = timeStamp
@@ -142,7 +143,7 @@ class _BodyState extends State<Body> {
                           .add_jms()
                           .format(dateTimeOffset);
                       dataList.add(
-                          'Message: ${res.data()['message'].toString()}\t\tTimestamp: ${dateTime.toString()}');
+                          '"${res.data()['message'].toString().replaceAll('"', '""')}","${dateTime.toString()}"');
                     });
                     if (dataList.isNotEmpty)
                       widget.tempStorage.writeLinesData(dataList);
@@ -248,7 +249,7 @@ class _BodyState extends State<Body> {
                         print('Error: ${snapshot.error}');
                       } else if (snapshot.hasData) {
                         docDirStr = snapshot.data.path;
-                        _docFile = File('$docDirStr/user_query.txt');
+                        _docFile = File('$docDirStr/user_query.csv');
                         print('Directory: ${_docFile.toString()}');
                       } else {
                         print('Directory unavailable.');
