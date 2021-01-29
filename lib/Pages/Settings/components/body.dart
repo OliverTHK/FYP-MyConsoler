@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -132,59 +133,175 @@ class _BodyState extends State<Body> {
                         .collection('mychats')
                         .orderBy('timeStamp')
                         .get();
-                    dataList.add('user_message,timestamp');
-                    querySnapshot.docs.forEach((res) async {
-                      Timestamp timeStamp = res.data()['timeStamp'];
-                      var dateTimeOffset = timeStamp
-                          .toDate()
-                          .toUtc()
-                          .add(new Duration(hours: 8));
-                      var dateTime = DateFormat('yyyy-MM-dd')
-                          .add_jms()
-                          .format(dateTimeOffset);
-                      dataList.add(
-                          '"${res.data()['message'].toString().replaceAll('"', '""')}","${dateTime.toString()}"');
-                    });
-                    if (dataList.isNotEmpty)
-                      widget.tempStorage.writeLinesData(dataList);
-                    else
-                      widget.tempStorage.writeLinesData([
-                        '-- No chat queries yet. Start chatting with MyConsoler bot to get some data. --'
-                      ]);
-                    var documentSnapshot = await FirebaseFirestore.instance
-                        .collection('myusers')
-                        .doc(firebaseUser.uid)
-                        .get();
-                    print('Recipient email: ${firebaseUser.email}');
-                    splittedName = documentSnapshot.data()['name'].split(' ');
-                    // ignore: deprecated_member_use
-                    final smtpServer = gmail(username, password);
-                    final emailMessage = Message()
-                      ..from = Address(username, 'MyConsoler')
-                      ..recipients.add('${firebaseUser.email}')
-                      ..subject = 'MyConsoler: Requested Query Data'
-                      ..text =
-                          'Hi ${splittedName.first},\n\nAttached below is your requested query data for MyConsoler chat.\n\nThank you for using MyConsoler.\n\n— MyConsoler Bot'
-                      ..attachments.add(FileAttachment(_docFile));
-                    try {
-                      final sendReport = await send(emailMessage, smtpServer);
-                      print(sendReport.toString());
-                      Fluttertoast.showToast(
-                        msg: 'Email sent. Please check your inbox.',
-                        toastLength: Toast.LENGTH_SHORT,
-                        timeInSecForIosWeb: 1,
+                    if (querySnapshot.docs.isEmpty) {
+                      print("No chat data found in the database.");
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          if (Platform.isIOS) {
+                            return CupertinoAlertDialog(
+                              title: Text('Export data failed.'),
+                              content: Text(
+                                  'Oops! You have yet to chat with MyConsoler Bot and thus, there\'s no chat data found in the database for now.\n\nYou can return to the Main page and tap on the Chat button in the bottom-right corner to start your first chat.'),
+                              actions: [
+                                CupertinoDialogAction(
+                                  child: Text('Dismiss'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          } else {
+                            return AlertDialog(
+                              title: Text('Export data failed.'),
+                              content: Text(
+                                  'Oops! You have yet to chat with MyConsoler Bot and thus, there\'s no chat data found in the database for now.\n\nYou can return to the Main page and tap on the Chat button in the bottom-right corner to start your first chat.'),
+                              actions: [
+                                TextButton(
+                                  child: Text('Dismiss'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          }
+                        },
+                        barrierDismissible: false,
                       );
-                    } on MailerException catch (e) {
-                      print('Message not sent.');
-                      Fluttertoast.showToast(
-                        msg:
-                            'Email not sent. The email address doesn\'t exist or might be invalid.',
-                        toastLength: Toast.LENGTH_SHORT,
-                        timeInSecForIosWeb: 1,
+                    } else {
+                      dataList.add('user_message,timestamp');
+                      querySnapshot.docs.forEach((res) async {
+                        Timestamp timeStamp = res.data()['timeStamp'];
+                        var dateTimeOffset = timeStamp
+                            .toDate()
+                            .toUtc()
+                            .add(new Duration(hours: 8));
+                        var dateTime = DateFormat('yyyy-MM-dd')
+                            .add_jms()
+                            .format(dateTimeOffset);
+                        dataList.add(
+                            '"${res.data()['message'].toString().replaceAll('"', '""')}","${dateTime.toString()}"');
+                      });
+                      if (dataList.isNotEmpty)
+                        widget.tempStorage.writeLinesData(dataList);
+                      var documentSnapshot = await FirebaseFirestore.instance
+                          .collection('myusers')
+                          .doc(firebaseUser.uid)
+                          .get();
+                      print('Recipient email: ${firebaseUser.email}');
+                      splittedName = documentSnapshot.data()['name'].split(' ');
+                      // ignore: deprecated_member_use
+                      final smtpServer = gmail(username, password);
+                      final emailMessage = Message()
+                        ..from = Address(username, 'MyConsoler')
+                        ..recipients.add('${firebaseUser.email}')
+                        ..subject = 'MyConsoler: Requested Query Data'
+                        ..text =
+                            'Hi ${splittedName.first},\n\nAttached below is your requested query data for MyConsoler chat.\n\nThank you for using MyConsoler.\n\n— MyConsoler Bot'
+                        ..attachments.add(FileAttachment(_docFile));
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          if (Platform.isIOS) {
+                            return CupertinoAlertDialog(
+                              title: Text('Are you sure?'),
+                              content: Text(
+                                  'Chat data will be sent to "${firebaseUser.email}". \n\nPlease tap "Yes" to continue.'),
+                              actions: [
+                                CupertinoDialogAction(
+                                  child: Text('Yes'),
+                                  onPressed: () async {
+                                    Navigator.of(context).pop();
+                                    try {
+                                      Fluttertoast.showToast(
+                                        msg: 'Sending email... Please wait.',
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        timeInSecForIosWeb: 1,
+                                      );
+                                      final sendReport =
+                                          await send(emailMessage, smtpServer);
+                                      print(sendReport.toString());
+                                      Fluttertoast.showToast(
+                                        msg:
+                                            'Email sent. Please check your inbox.',
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        timeInSecForIosWeb: 1,
+                                      );
+                                    } on MailerException catch (e) {
+                                      print('Message not sent.');
+                                      Fluttertoast.showToast(
+                                        msg:
+                                            'Email not sent. The email address doesn\'t exist or might be invalid.',
+                                        toastLength: Toast.LENGTH_LONG,
+                                        timeInSecForIosWeb: 3,
+                                      );
+                                      for (var p in e.problems) {
+                                        print('Problem: ${p.code}: ${p.msg}');
+                                      }
+                                    }
+                                  },
+                                ),
+                                CupertinoDialogAction(
+                                  child: Text('Cancel'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          } else {
+                            return AlertDialog(
+                              title: Text('Are you sure?'),
+                              content: Text(
+                                  'Chat data will be sent to "${firebaseUser.email}". \n\nPlease tap "Yes" to continue.'),
+                              actions: [
+                                TextButton(
+                                  child: Text('Yes'),
+                                  onPressed: () async {
+                                    Navigator.of(context).pop();
+                                    try {
+                                      Fluttertoast.showToast(
+                                        msg: 'Sending email... Please wait.',
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        timeInSecForIosWeb: 1,
+                                      );
+                                      final sendReport =
+                                          await send(emailMessage, smtpServer);
+                                      print(sendReport.toString());
+                                      Fluttertoast.showToast(
+                                        msg:
+                                            'Email sent. Please check your inbox.',
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        timeInSecForIosWeb: 1,
+                                      );
+                                    } on MailerException catch (e) {
+                                      print('Message not sent.');
+                                      Fluttertoast.showToast(
+                                        msg:
+                                            'Email not sent. The email address doesn\'t exist or might be invalid.',
+                                        toastLength: Toast.LENGTH_LONG,
+                                        timeInSecForIosWeb: 3,
+                                      );
+                                      for (var p in e.problems) {
+                                        print('Problem: ${p.code}: ${p.msg}');
+                                      }
+                                    }
+                                  },
+                                ),
+                                TextButton(
+                                  child: Text('Cancel'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          }
+                        },
+                        barrierDismissible: false,
                       );
-                      for (var p in e.problems) {
-                        print('Problem: ${p.code}: ${p.msg}');
-                      }
                     }
                   },
                 ),
