@@ -26,7 +26,7 @@ class AuthService {
     } catch (error) {
       switch (error.code) {
         case 'user-not-found':
-          return 'The email entered is not found in the database. Please click on the link below the "Log In" button to sign up or retry with the correct login credentials.';
+          return 'The email entered is not found in the database. Please tap on the link below the "Log In" button to sign up or retry with the correct login credentials.';
           break;
         case 'wrong-password':
           return 'The password entered is incorrect. Please try again.';
