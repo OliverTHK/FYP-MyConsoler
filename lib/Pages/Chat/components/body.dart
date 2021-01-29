@@ -190,7 +190,10 @@ class _BodyState extends State<Body> {
                                 Icons.send,
                               ),
                               onPressed: () async {
-                                if (_textEditingController.text.isEmpty) {
+                                String tempText;
+                                tempText = _textEditingController.text;
+                                if (_textEditingController.text.isEmpty ||
+                                    tempText.replaceAll(' ', '').isEmpty) {
                                   print('Empty message.');
                                 } else {
                                   await DatabaseService(uid: user.uid)
