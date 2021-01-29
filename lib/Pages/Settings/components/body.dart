@@ -42,7 +42,7 @@ class _BodyState extends State<Body> {
 
   Future<Null> getSharedPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    selectedRadio = prefs.getInt('selectedRadio');
+    selectedRadio = prefs.getInt('selectedRadio') ?? 1;
   }
 
   @override
