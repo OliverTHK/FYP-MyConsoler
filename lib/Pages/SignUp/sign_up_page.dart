@@ -6,7 +6,6 @@ class SignUpPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      // extendBodyBehindAppBar: true,
       body: Body(),
     );
   }
