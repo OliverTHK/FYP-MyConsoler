@@ -97,9 +97,6 @@ class _BodyState extends State<Body> {
                           return Bubble(
                             radius: Radius.circular(10),
                             color: isUserMessage ? kPrimaryColor : Colors.grey,
-                            nip: isUserMessage
-                                ? BubbleNip.rightTop
-                                : BubbleNip.leftTop,
                             elevation: 1,
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
