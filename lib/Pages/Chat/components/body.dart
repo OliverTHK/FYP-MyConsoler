@@ -100,16 +100,20 @@ class _BodyState extends State<Body> {
                             elevation: 1,
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: SelectableLinkify(
-                                onOpen: _onOpen,
-                                text: message?.text?.text[0] ?? '',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  // fontWeight: FontWeight.bold,
+                              child: Theme(
+                                data: ThemeData(
+                                  textSelectionColor: Colors.cyan,
                                 ),
-                                linkStyle:
-                                    TextStyle(color: Colors.lightBlue[100]),
+                                child: SelectableLinkify(
+                                  onOpen: _onOpen,
+                                  text: message?.text?.text[0] ?? '',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  linkStyle:
+                                      TextStyle(color: Colors.lightBlue[100]),
+                                ),
                               ),
                             ),
                           );
@@ -192,7 +196,6 @@ class _BodyState extends State<Body> {
                         minLines: 1,
                         maxLines: 3,
                         style: TextStyle(fontSize: 16, color: Colors.black),
-                        // onChanged: (value) {},
                       ),
                     ),
                   ),
