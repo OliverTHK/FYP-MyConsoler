@@ -10,7 +10,7 @@ class DatabaseService {
   final CollectionReference mySuggestionCollection =
       FirebaseFirestore.instance.collection('mysuggestions');
 
-  Future updateUserData(String name, int age, String gender, String isPatient,
+  Future addUserData(String name, int age, String gender, String isPatient,
       String occupation, String financialStatus) async {
     return await myUserCollection.doc(uid).set({
       'name': name,

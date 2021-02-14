@@ -369,7 +369,7 @@ class _BodyState extends State<Body> {
                                         }
                                         _formKey.currentState.save();
                                         await DatabaseService(uid: user.uid)
-                                            .updateUserData(
+                                            .addUserData(
                                           name,
                                           int.parse(age),
                                           gender,

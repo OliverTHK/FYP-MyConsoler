@@ -509,7 +509,7 @@ class _BodyState extends State<Body> {
                                     print(error);
                                   } else {
                                     await DatabaseService(uid: result.uid)
-                                        .updateUserData(
+                                        .addUserData(
                                       name,
                                       int.parse(age),
                                       gender,
