@@ -50,7 +50,7 @@ class _MyRecommendationCarouselState extends State<MyRecommendationCarousel> {
                   );
                 },
                 options: CarouselOptions(
-                  viewportFraction: 0.5,
+                  viewportFraction: 0.75,
                   autoPlay: true,
                   enlargeCenterPage: true,
                   enableInfiniteScroll: false,
