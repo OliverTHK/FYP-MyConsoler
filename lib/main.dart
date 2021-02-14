@@ -6,6 +6,7 @@ import 'package:my_consoler/Pages/Chat/chat_page.dart';
 import 'package:my_consoler/Pages/Helpline/helpline_page.dart';
 import 'package:my_consoler/Pages/Login/login_page.dart';
 import 'package:my_consoler/Pages/Main/main_page.dart';
+import 'package:my_consoler/Pages/Profile/edit_profile_page.dart';
 import 'package:my_consoler/Pages/Settings/settings_page.dart';
 import 'package:my_consoler/Pages/SignUp/sign_up_page.dart';
 import 'package:my_consoler/Pages/Suggestions/suggestions_page.dart';
@@ -72,6 +73,7 @@ class MaterialAppWithTheme extends StatelessWidget {
             '/helpline': (context) => HelplinePage(),
             '/settings': (context) => SettingsPage(),
             '/suggestions': (context) => SuggestionsPage(),
+            '/profile': (context) => EditProfilePage(),
             '/chat': (context) => ChatPage(),
             '/login': (context) => LoginPage(),
             '/signup': (context) => SignUpPage(),

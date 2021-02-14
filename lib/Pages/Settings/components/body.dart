@@ -332,6 +332,13 @@ class _BodyState extends State<Body> {
                   ),
                 ),
                 ListTile(
+                  leading: Icon(Icons.edit_outlined),
+                  title: Text('Edit Profile'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/profile');
+                  },
+                ),
+                ListTile(
                   leading: Icon(Icons.exit_to_app),
                   title: Text('Log Out'),
                   onTap: () async {
