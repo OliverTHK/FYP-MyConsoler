@@ -22,6 +22,21 @@ class DatabaseService {
     });
   }
 
+  Future updateUserData(String name, int age, String gender, String isPatient,
+      String occupation, String financialStatus) async {
+    return await myUserCollection.doc(uid).set(
+      {
+        'name': name,
+        'age': age,
+        'gender': gender,
+        'isPatient': isPatient,
+        'occupation': occupation,
+        'financialStatus': financialStatus,
+      },
+      SetOptions(merge: true),
+    );
+  }
+
   Future updateThoughtData(String thought) async {
     return await myUserCollection.doc(uid).set(
       {'thought': thought},
