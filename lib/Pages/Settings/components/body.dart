@@ -95,7 +95,7 @@ class _BodyState extends State<Body> {
                   title: Text('Light'),
                   activeColor: kPrimaryColor,
                   onChanged: (val) {
-                    print('Radio button ${val} is pressed.');
+                    print('Radio button $val is pressed.');
                     setSelectedRadio(val);
                     AdaptiveTheme.of(context).setLight();
                   },
@@ -107,7 +107,7 @@ class _BodyState extends State<Body> {
                   title: Text('Dark'),
                   activeColor: kPrimaryColor,
                   onChanged: (val) {
-                    print('Radio button ${val} is pressed.');
+                    print('Radio button $val is pressed.');
                     setSelectedRadio(val);
                     AdaptiveTheme.of(context).setDark();
                   },
@@ -119,7 +119,7 @@ class _BodyState extends State<Body> {
                   title: Text('System Default'),
                   activeColor: kPrimaryColor,
                   onChanged: (val) {
-                    print('Radio button ${val} is pressed.');
+                    print('Radio button $val is pressed.');
                     setSelectedRadio(val);
                     AdaptiveTheme.of(context).setSystem();
                   },
