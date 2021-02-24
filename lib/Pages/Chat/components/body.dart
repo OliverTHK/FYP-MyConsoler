@@ -34,6 +34,7 @@ class _BodyState extends State<Body> {
   double minSoundLevel = 50000;
   double maxSoundLevel = -50000;
   List<Map<String, dynamic>> messages = [];
+  List<String> suggestionChipTexts = [];
 
   @override
   void initState() {
@@ -61,6 +62,7 @@ class _BodyState extends State<Body> {
   Widget build(BuildContext context) {
     final user = Provider.of<CustomUser>(context);
     Size size = MediaQuery.of(context).size;
+    bool isPrevUser;
     return Column(
       children: [
         Expanded(
@@ -74,6 +76,8 @@ class _BodyState extends State<Body> {
                 var obj = messages[messages.length - 1 - index];
                 Message message = obj['message'];
                 bool isUserMessage = obj['isUserMessage'] ?? false;
+                bool isSameUser = isPrevUser == obj['isUserMessage'];
+                isPrevUser = obj['isUserMessage'];
                 return Row(
                   mainAxisAlignment: isUserMessage
                       ? MainAxisAlignment.end
@@ -83,41 +87,47 @@ class _BodyState extends State<Body> {
                     isUserMessage
                         ? Container()
                         : Container(
-                            height: 60.0,
-                            width: 60.0,
-                            child: CircleAvatar(
-                              backgroundImage:
-                                  AssetImage('assets/icons/Icon 1.png'),
-                            ),
+                            height: 40.0,
+                            width: 40.0,
+                            child: !isSameUser
+                                ? CircleAvatar(
+                                    backgroundImage:
+                                        AssetImage('assets/icons/Icon 1.png'),
+                                  )
+                                : null,
                           ),
-                    Container(
-                      constraints: BoxConstraints(maxWidth: size.width * 0.5),
-                      child: LayoutBuilder(
-                        builder: (context, constrains) {
-                          return Bubble(
-                            radius: Radius.circular(10),
-                            color: isUserMessage ? kPrimaryColor : Colors.grey,
-                            elevation: 1,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Theme(
-                                data: ThemeData(
-                                  textSelectionColor: Colors.cyan,
-                                ),
-                                child: SelectableLinkify(
-                                  onOpen: _onOpen,
-                                  text: message?.text?.text[0] ?? '',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        constraints: BoxConstraints(maxWidth: size.width * 0.5),
+                        child: LayoutBuilder(
+                          builder: (context, constrains) {
+                            return Bubble(
+                              radius: Radius.circular(10),
+                              color:
+                                  isUserMessage ? kPrimaryColor : Colors.grey,
+                              elevation: 1.0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Theme(
+                                  data: ThemeData(
+                                    textSelectionColor: Colors.cyan,
                                   ),
-                                  linkStyle:
-                                      TextStyle(color: Colors.lightBlue[100]),
+                                  child: SelectableLinkify(
+                                    onOpen: _onOpen,
+                                    text: message?.text?.text[0] ?? '',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    linkStyle:
+                                        TextStyle(color: Colors.lightBlue[100]),
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ],
@@ -132,6 +142,25 @@ class _BodyState extends State<Body> {
               ),
             ),
           ),
+        ),
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 8.0,
+          runSpacing: 0.0,
+          children:
+              List<Widget>.generate(suggestionChipTexts.length, (int index) {
+            return ActionChip(
+              label: Text(suggestionChipTexts[index]),
+              onPressed: () {
+                setState(() async {
+                  await DatabaseService(uid: user.uid)
+                      .addChatData(suggestionChipTexts[index], DateTime.now());
+                  sendMessage(suggestionChipTexts[index]);
+                  suggestionChipTexts.clear();
+                });
+              },
+            );
+          }),
         ),
         Divider(
           height: 5.0,
@@ -229,11 +258,7 @@ class _BodyState extends State<Body> {
                                         DateTime.now());
                                 sendMessage(_textEditingController.text);
                                 _textEditingController.clear();
-                                _scrollController.animateTo(
-                                  0.0,
-                                  duration: Duration(milliseconds: 300),
-                                  curve: Curves.easeOut,
-                                );
+                                suggestionChipTexts.clear();
                               }
                             },
                           ),
@@ -316,6 +341,11 @@ class _BodyState extends State<Body> {
 
   void sendMessage(String text) async {
     if (text.isEmpty) return;
+    _scrollController.animateTo(
+      0.0,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
     setState(() {
       addMessage(
         Message(text: DialogText(text: [text])),
@@ -333,8 +363,17 @@ class _BodyState extends State<Body> {
 
     if (response.message == null) return;
     setState(() {
-      addMessage(response.message);
-      print(response.message);
+      print(response.queryResult.fulfillmentMessages);
+      response.queryResult.fulfillmentMessages.forEach((element) {
+        if (element.type == MessageType.text) addMessage(element);
+        if (element.type == MessageType.payload) {
+          for (int i = 0; i < element.payload['suggestions'].length; ++i) {
+            print('Suggestion $i: ${element.payload['suggestions'][i]}');
+            suggestionChipTexts.add(element.payload['suggestions'][i]);
+          }
+          print("All suggestions: ${element.payload['suggestions']}");
+        }
+      });
     });
   }
 
