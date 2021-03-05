@@ -46,3 +46,5 @@ app.*.map.json
 .gradle/
 local.properties
 assets/dialog_flow_auth.json
+ios/Flutter/.last_build_id
+ios/Podfile.lock
