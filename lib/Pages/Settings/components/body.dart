@@ -39,6 +39,7 @@ class _BodyState extends State<Body> {
   List<String> splittedName = new List<String>();
   int selectedRadio;
 
+  // For preserving the selection state of radio button
   Future<Null> getSharedPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     selectedRadio = prefs.getInt('selectedRadio') ?? 1;
@@ -300,7 +301,7 @@ class _BodyState extends State<Body> {
                         height: 50,
                       ),
                       applicationVersion: version + '+' + buildNumber,
-                      applicationLegalese: '© 2020 oliverthk.dev',
+                      applicationLegalese: '© 2021 oliverthk.dev',
                       children: [
                         SizedBox(
                           height: 30,
@@ -319,6 +320,7 @@ class _BodyState extends State<Body> {
                       if (snapshot.hasError) {
                         print('Error: ${snapshot.error}');
                       } else if (snapshot.hasData) {
+                        // To retrieve device directory
                         docDirStr = snapshot.data.path;
                         _docFile = File('$docDirStr/user_query.csv');
                         print('Directory: ${_docFile.toString()}');
