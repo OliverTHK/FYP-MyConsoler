@@ -72,8 +72,8 @@ class _BodyState extends State<Body> {
       inputKeywords.removeWhere(
           (element) => extraStopWordList.contains(element.toLowerCase()));
 
-      allKeywords = List.from(
-          inputKeywords); // Copy the keywords from inputKeywords to allKeywords
+      // Copy the keywords from inputKeywords to allKeywords
+      allKeywords = List.from(inputKeywords);
 
       // *** EXTRA USER DATA EXTRACTION FOR RECOMMENDATION LOGIC ***
       if (myUsers.data()['age'] < 55)
@@ -449,7 +449,6 @@ class _BodyState extends State<Body> {
                         Expanded(
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 8.0),
-                            // child: MyRecommendationList(
                             child: MyRecommendationCarousel(
                               keyWordList: allKeywords ?? [''],
                             ),

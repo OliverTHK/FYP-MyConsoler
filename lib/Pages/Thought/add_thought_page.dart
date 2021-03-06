@@ -42,7 +42,6 @@ class _AddThoughtPageState extends State<AddThoughtPage> {
                         child: Text(
                           'Skip',
                           style: TextStyle(
-                            // color: Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

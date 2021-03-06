@@ -1,13 +1,12 @@
-import 'dart:io';
 import 'package:email_validator/email_validator.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_consoler/Pages/Login/components/background.dart';
+import 'package:my_consoler/Pages/Login/components/sign_up_link.dart';
 import 'package:my_consoler/Services/auth.dart';
 import 'package:my_consoler/components/animations/my_fade_in.dart';
 import 'package:my_consoler/components/rounded_button.dart';
-import 'package:my_consoler/Pages/Login/components/sign_up_link.dart';
 import 'package:my_consoler/components/text_field_container.dart';
 import 'package:my_consoler/themes.dart';
 
@@ -158,9 +157,6 @@ class _BodyState extends State<Body> {
                               return;
                             }
                             formKey.currentState.save();
-                            // Remove this after testing
-                            print(email);
-                            print(password);
                             dynamic result =
                                 await _auth.logInWithEmailAndPassword(
                               email,
@@ -173,33 +169,18 @@ class _BodyState extends State<Body> {
                               showDialog(
                                 context: context,
                                 builder: (context) {
-                                  if (Platform.isIOS) {
-                                    return CupertinoAlertDialog(
-                                      title: Text('Login failed.'),
-                                      content: Text(error),
-                                      actions: [
-                                        CupertinoDialogAction(
-                                          child: Text('Dismiss'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  } else {
-                                    return AlertDialog(
-                                      title: Text('Login failed.'),
-                                      content: Text(error),
-                                      actions: [
-                                        TextButton(
-                                          child: Text('Dismiss'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  }
+                                  return AlertDialog(
+                                    title: Text('Login failed.'),
+                                    content: Text(error),
+                                    actions: [
+                                      TextButton(
+                                        child: Text('Dismiss'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
                                 },
                                 barrierDismissible: false,
                               );

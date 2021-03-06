@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:email_validator/email_validator.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/cupertino.dart';
@@ -455,15 +453,6 @@ class _BodyState extends State<Body> {
                                     return;
                                   }
                                   _formKey.currentState.save();
-                                  // Remove this after testing
-                                  print(name);
-                                  print(age);
-                                  print(gender);
-                                  print(isPatient);
-                                  print(occupation);
-                                  print(financialStatus);
-                                  print(email);
-                                  print(password);
                                   dynamic result =
                                       await _auth.signUpWithEmailAndPassword(
                                     email,
@@ -476,33 +465,18 @@ class _BodyState extends State<Body> {
                                     showDialog(
                                       context: context,
                                       builder: (context) {
-                                        if (Platform.isIOS) {
-                                          return CupertinoAlertDialog(
-                                            title: Text('Sign up failed.'),
-                                            content: Text(error),
-                                            actions: [
-                                              CupertinoDialogAction(
-                                                child: Text('Dismiss'),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        } else {
-                                          return AlertDialog(
-                                            title: Text('Sign up failed.'),
-                                            content: Text(error),
-                                            actions: [
-                                              TextButton(
-                                                child: Text('Dismiss'),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        }
+                                        return AlertDialog(
+                                          title: Text('Sign up failed.'),
+                                          content: Text(error),
+                                          actions: [
+                                            TextButton(
+                                              child: Text('Dismiss'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
                                       },
                                       barrierDismissible: false,
                                     );
