@@ -84,7 +84,7 @@ class _AddThoughtPageState extends State<AddThoughtPage> {
                                         color: kPrimaryLightColor,
                                       ),
                                     ),
-                                    hintText: 'Input your thought here',
+                                    hintText: 'I feel...',
                                   ),
                                   autofocus: true,
                                   maxLength: 50,

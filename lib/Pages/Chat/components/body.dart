@@ -213,7 +213,7 @@ class _BodyState extends State<Body> {
                       child: TextFormField(
                         controller: _textEditingController,
                         decoration: InputDecoration(
-                          hintText: 'Enter a message',
+                          hintText: 'Message...',
                           hintStyle: TextStyle(color: Colors.black54),
                           border: InputBorder.none,
                           disabledBorder: InputBorder.none,

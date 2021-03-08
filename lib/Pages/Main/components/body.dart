@@ -292,7 +292,7 @@ class _BodyState extends State<Body> {
                                                                   ),
                                                                 ),
                                                                 hintText:
-                                                                    'Input your thought here',
+                                                                    'I feel...',
                                                               ),
                                                               autofocus: true,
                                                               initialValue:
