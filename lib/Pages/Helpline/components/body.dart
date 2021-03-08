@@ -28,7 +28,7 @@ class Body extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Befrienders',
+                'Helplines',
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
@@ -76,6 +76,32 @@ class Body extends StatelessWidget {
                     ),
                     Text(
                       '  Click for more helplines',
+                      style: TextStyle(
+                        color: kPrimaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                'or',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              GestureDetector(
+                onTap: () {
+                  launch(('https://www.instagram.com/p/CL0zc1dJ7cy/'));
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      WebSymbols.logout,
+                      color: kPrimaryColor,
+                      size: 12,
+                    ),
+                    Text(
+                      '  Click here for other helplines',
                       style: TextStyle(
                         color: kPrimaryColor,
                         fontWeight: FontWeight.bold,
