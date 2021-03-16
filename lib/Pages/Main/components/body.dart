@@ -61,11 +61,11 @@ class _BodyState extends State<Body> {
       }
       score = sentimentResult['score'].toDouble();
       // To limit the score obtained from the sentiment analysis so that the value doesn't go beyond Slider value limit
-      if (score < -10.0) {
-        score = -10.0;
+      if (score < -2.0) {
+        score = -2.0;
       }
-      if (score > 10.0) {
-        score = 10.0;
+      if (score > 2.0) {
+        score = 2.0;
       }
 
       // *** FOR REMOVING EXTRA STOP WORDS FROM inputKeyword LIST ***

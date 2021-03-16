@@ -18,12 +18,12 @@ class _EmotionRatingBarState extends State<EmotionRatingBar> {
   @override
   Widget build(BuildContext context) {
     sliderValue = this.widget.value;
-    if (sliderValue >= -10.0 && sliderValue < -2.0) {
+    if (sliderValue >= -2.0 && sliderValue < -1.0) {
       feedbackText = 'COULD BE BETTER';
       feedbackIcon = FontAwesomeIcons.sadTear;
       feedbackColor = Colors.red;
     }
-    if (sliderValue >= -2.0 && sliderValue < 0.0) {
+    if (sliderValue >= -1.0 && sliderValue < 0.0) {
       feedbackText = 'SLIGHTLY NEGATIVE';
       feedbackIcon = FontAwesomeIcons.frown;
       feedbackColor = Colors.yellow;
@@ -33,12 +33,12 @@ class _EmotionRatingBarState extends State<EmotionRatingBar> {
       feedbackIcon = FontAwesomeIcons.meh;
       feedbackColor = Colors.amber;
     }
-    if (sliderValue > 0.0 && sliderValue <= 5.0) {
+    if (sliderValue > 0.0 && sliderValue <= 1.0) {
       feedbackText = 'GOOD';
       feedbackIcon = FontAwesomeIcons.smile;
       feedbackColor = Colors.green;
     }
-    if (sliderValue > 5.0 && sliderValue <= 10.0) {
+    if (sliderValue > 1.0 && sliderValue <= 2.0) {
       feedbackText = 'EXCELLENT';
       feedbackIcon = FontAwesomeIcons.laugh;
       feedbackColor = Colors.green;
@@ -74,9 +74,9 @@ class _EmotionRatingBarState extends State<EmotionRatingBar> {
                 Container(
                   child: Slider(
                     value: sliderValue,
-                    min: -10.0,
-                    max: 10.0,
-                    divisions: 20,
+                    min: -2.0,
+                    max: 2.0,
+                    divisions: 4,
                     onChanged: null,
                   ),
                 ),
