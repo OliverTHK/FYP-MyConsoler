@@ -9,6 +9,8 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('myusers');
   final CollectionReference mySuggestionCollection =
       FirebaseFirestore.instance.collection('mysuggestions');
+  final CollectionReference myHelplineCollection =
+      FirebaseFirestore.instance.collection('myhelplines');
 
   Future addUserData(String name, int age, String gender, String isPatient,
       String occupation, String financialStatus) async {
@@ -59,5 +61,10 @@ class DatabaseService {
   // Get mysuggestions stream
   Stream<QuerySnapshot> get mySuggestions {
     return mySuggestionCollection.snapshots();
+  }
+
+  // Get myhelplines stream
+  Stream<QuerySnapshot> get myHelplines {
+    return myHelplineCollection.snapshots();
   }
 }
