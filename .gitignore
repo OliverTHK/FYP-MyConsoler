@@ -49,3 +49,4 @@ assets/dialog_flow_auth.json
 ios/Flutter/.last_build_id
 ios/Podfile.lock
 lib/Pages/Settings/components/myconsoler_credentials.dart
+pubspec.lock
